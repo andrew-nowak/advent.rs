@@ -1,3 +1,5 @@
+use std::num::Wrapping;
+
 fn run(data: &str) {
     let data = data.as_bytes();
 
@@ -9,82 +11,40 @@ fn run(data: &str) {
 
     let mut found = 0;
 
-    //fn is_xmas(data: &[u8], start: usize, dir: usize) -> bool {
-    //    start.wrapping_add(3usize.wrapping_mul(dir)) >= 0
-    //        && (start) + 3 * dir < data.len()
-    //        && [
-    //            data[start],
-    //            data[start + dir],
-    //            data[start + 2 * dir],
-    //            data[start + 3 * dir],
-    //        ] == *b"XMAS"
-    //}
+    fn is_xmas(data: &[u8], start: Wrapping<usize>, dir: Wrapping<usize>) -> bool {
+        // bounds check
+        if (start + Wrapping(3) * dir).0 < data.len() {
+            let run = [
+                data[start.0],
+                data[(start + dir).0],
+                data[(start + Wrapping(2) * dir).0],
+                data[(start + Wrapping(3) * dir).0],
+            ];
+            // forwards or backwards
+            run == *b"XMAS" || run == *b"SAMX"
+        } else {
+            false
+        }
+    }
 
     for (i, b) in data.iter().enumerate() {
-        if *b == b'X' {
-            // right
-            if i + 3 < data.len() && [data[i], data[i + 1], data[i + 2], data[i + 3]] == *b"XMAS" {
+        if *b == b'X' || *b == b'S' {
+            // left/right
+            if is_xmas(data, Wrapping(i), Wrapping(1)) {
                 found += 1;
             }
-            // left
-            if i >= 3 && [data[i], data[i - 1], data[i - 2], data[i - 3]] == *b"XMAS" {
-                found += 1;
-            }
-            // down
-            if i + 3 * ll < data.len()
-                && [data[i], data[i + ll], data[i + 2 * ll], data[i + 3 * ll]] == *b"XMAS"
-            {
-                found += 1;
-            }
-            // up
-            if i >= 3 * ll
-                && [data[i], data[i - ll], data[i - 2 * ll], data[i - 3 * ll]] == *b"XMAS"
-            {
+            // up/down
+            if is_xmas(data, Wrapping(i), Wrapping(ll)) {
                 found += 1;
             }
 
-            // down-right
-            if i + 3 * ll + 3 < data.len()
-                && [
-                    data[i],
-                    data[i + 1 + ll],
-                    data[i + 2 + ll * 2],
-                    data[i + 3 + ll * 3],
-                ] == *b"XMAS"
-            {
+            // forward diag `/`
+            if is_xmas(data, Wrapping(i), Wrapping(ll - 1)) {
                 found += 1;
             }
-            // down-left
-            if i - 3 + ll * 3 < data.len()
-                && [
-                    data[i],
-                    data[i - 1 + ll],
-                    data[i - 2 + ll * 2],
-                    data[i - 3 + ll * 3],
-                ] == *b"XMAS"
-            {
-                found += 1;
-            }
-            // up-left
-            if i >= 3 + 3 * ll
-                && [
-                    data[i],
-                    data[i - 1 - ll],
-                    data[i - 2 - 2 * ll],
-                    data[i - 3 - 3 * ll],
-                ] == *b"XMAS"
-            {
-                found += 1;
-            }
-            // up-right
-            if i >= (3 * ll) - 3
-                && [
-                    data[i],
-                    data[i + 1 - ll],
-                    data[i + 2 - 2 * ll],
-                    data[i + 3 - 3 * ll],
-                ] == *b"XMAS"
-            {
+
+            // backward diag `\`
+            if is_xmas(data, Wrapping(i), Wrapping(ll + 1)) {
                 found += 1;
             }
         }
