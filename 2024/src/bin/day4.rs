@@ -1,5 +1,23 @@
 use std::num::Wrapping;
 
+use std::time::Instant;
+
+fn is_xmas(data: &[u8], start: Wrapping<usize>, dir: Wrapping<usize>) -> bool {
+    // bounds check
+    if (start + Wrapping(3) * dir).0 < data.len() {
+        let run = [
+            data[start.0],
+            data[(start + dir).0],
+            data[(start + Wrapping(2) * dir).0],
+            data[(start + Wrapping(3) * dir).0],
+        ];
+        // forwards or backwards
+        run == *b"XMAS" || run == *b"SAMX"
+    } else {
+        false
+    }
+}
+
 fn run(data: &str) {
     let data = data.as_bytes();
 
@@ -9,26 +27,12 @@ fn run(data: &str) {
         .expect("no newlines in input")
         + 1;
 
+    let start = Instant::now();
     let mut found = 0;
 
-    fn is_xmas(data: &[u8], start: Wrapping<usize>, dir: Wrapping<usize>) -> bool {
-        // bounds check
-        if (start + Wrapping(3) * dir).0 < data.len() {
-            let run = [
-                data[start.0],
-                data[(start + dir).0],
-                data[(start + Wrapping(2) * dir).0],
-                data[(start + Wrapping(3) * dir).0],
-            ];
-            // forwards or backwards
-            run == *b"XMAS" || run == *b"SAMX"
-        } else {
-            false
-        }
-    }
-
-    for (i, b) in data.iter().enumerate() {
-        if *b == b'X' || *b == b'S' {
+    for i in 0..data.len() {
+        let b = data[i];
+        if b == b'X' || b == b'S' {
             // left/right
             if is_xmas(data, Wrapping(i), Wrapping(1)) {
                 found += 1;
@@ -50,7 +54,12 @@ fn run(data: &str) {
         }
     }
 
+    let end = Instant::now();
+
     println!("Part 1: {}", found);
+    println!("Took {}ns", (end - start).as_nanos());
+
+    let start = Instant::now();
 
     let mut found = 0;
 
@@ -69,7 +78,10 @@ fn run(data: &str) {
         }
     }
 
+    let end = Instant::now();
+
     println!("Part 2: {}", found);
+    println!("Took {}ns", (end - start).as_nanos());
 }
 
 fn main() {
