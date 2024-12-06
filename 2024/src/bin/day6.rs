@@ -7,11 +7,12 @@ fn run_p2_iteration(
     bounds: &Point,
     start_pos: &Point,
     start_dir: &Direction,
-    extra_obs: &Point,
 ) -> bool {
-    let mut visited_w_dir: HashSet<(Point, Direction)> = HashSet::new();
+    let extra_obs = start_pos.go(&start_dir);
+
+    let mut visited_w_dir: HashSet<(Point, Direction)> = HashSet::with_capacity(32000);
     let mut pos = start_pos.clone();
-    let mut dir = start_dir.clone();
+    let mut dir = start_dir.cw();
 
     loop {
         if visited_w_dir.contains(&(pos.clone(), dir.clone())) {
@@ -57,11 +58,10 @@ fn run(data: &str) {
 
     let mut guard_pos = start_pos.clone();
 
-    let mut guard_dir = start_dir.clone();
+    let mut guard_dir = start_dir;
 
-    let mut visited: HashSet<Point> = HashSet::new();
+    let mut visited: HashSet<Point> = HashSet::with_capacity(64000);
 
-    let mut loops: HashSet<Point> = HashSet::new();
     let mut seen = 0;
 
     loop {
@@ -74,8 +74,9 @@ fn run(data: &str) {
         if next_tile == b'#' {
             guard_dir = guard_dir.cw();
         } else {
-            if run_p2_iteration(&map, &bounds, &start_pos, &start_dir, &next_pos) {
-                loops.insert(next_pos.clone());
+            if !visited.contains(&next_pos) 
+                && run_p2_iteration(&map, &bounds, &guard_pos, &guard_dir)
+            {
                 seen += 1;
             }
             guard_pos = next_pos;
@@ -86,11 +87,9 @@ fn run(data: &str) {
 
     println!("Part 1: {}", visited.len());
 
-    loops.remove(&start_pos);
-
     //let p2 = format!("hello {} v2", data);
     //
-    println!("Part 2: {}", loops.len());
+    println!("Part 2: {}", seen); //loops.len());
     println!("bad {}", seen);
 }
 
