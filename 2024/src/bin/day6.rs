@@ -1,4 +1,6 @@
-use std::collections::HashSet;
+use std::time::Instant;
+
+use rustc_hash::FxHashSet as HashSet;
 
 use advent_rs::{Direction, Point};
 
@@ -10,7 +12,7 @@ fn run_p2_iteration(
 ) -> bool {
     let extra_obs = start_pos.go(&start_dir);
 
-    let mut visited_w_dir: HashSet<(Point, Direction)> = HashSet::with_capacity(32000);
+    let mut visited_w_dir: HashSet<(Point, Direction)> = HashSet::with_capacity_and_hasher(32000, Default::default());
     let mut pos = start_pos.clone();
     let mut dir = start_dir.cw();
 
@@ -33,6 +35,7 @@ fn run_p2_iteration(
 }
 
 fn run(data: &str) {
+    let start = Instant::now();
     let data = data.as_bytes();
 
     let guard_start = data
@@ -60,7 +63,7 @@ fn run(data: &str) {
 
     let mut guard_dir = start_dir;
 
-    let mut visited: HashSet<Point> = HashSet::with_capacity(64000);
+    let mut visited: HashSet<Point> = HashSet::with_capacity_and_hasher(64000, Default::default());
 
     let mut seen = 0;
 
@@ -83,14 +86,11 @@ fn run(data: &str) {
         }
     }
 
-    println!("last pos: {:?}", guard_pos);
-
     println!("Part 1: {}", visited.len());
 
-    //let p2 = format!("hello {} v2", data);
-    //
-    println!("Part 2: {}", seen); //loops.len());
-    println!("bad {}", seen);
+    println!("Part 2: {}", seen);
+
+    println!("in {}us", (Instant::now() - start).as_micros());
 }
 
 fn main() {
