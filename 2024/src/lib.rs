@@ -1,3 +1,7 @@
+use std::any::type_name;
+use std::fmt::Debug;
+use std::str::FromStr;
+
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Direction {
     Up,
@@ -83,4 +87,19 @@ impl Point {
     pub fn left(&self) -> Point {
         self.left_by(1)
     }
+}
+
+pub fn must_parse<F>(s: &str) -> F
+where
+    F: FromStr,
+    <F as FromStr>::Err: Debug,
+{
+    s.parse::<F>()
+        .expect(&format!("'{}' could not parse to {}", s, type_name::<F>()))
+}
+
+#[test]
+#[should_panic(expected = "'hi!' could not parse to i64")]
+fn test_must_parse_failure() {
+    must_parse::<i64>("hi!");
 }

@@ -1,3 +1,5 @@
+use advent_rs::must_parse;
+
 #[derive(Debug)]
 struct StackVal {
     so_far: u64,
@@ -19,10 +21,10 @@ fn run(data: &str, may_concat: bool) {
         let (goal, values) = line.split_once(": ").expect("Line was malformed");
         let values = values
             .split(" ")
-            .map(|v| v.parse::<u64>().unwrap())
+            .map(|v| must_parse::<u64>(v))
             .collect::<Vec<u64>>();
 
-        let goal = goal.parse::<u64>().unwrap();
+        let goal = must_parse::<u64>(goal);
 
         let all_sum: u64 = values.iter().sum();
         let all_prod: u64 = values.iter().product();
