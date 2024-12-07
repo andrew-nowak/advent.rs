@@ -89,17 +89,61 @@ impl Point {
     }
 }
 
-pub fn must_parse<F>(s: &str) -> F
-where
-    F: FromStr,
-    <F as FromStr>::Err: Debug,
-{
-    s.parse::<F>()
-        .expect(&format!("'{}' could not parse to {}", s, type_name::<F>()))
+pub trait MustParse {
+    fn must_parse<F>(&self) -> F
+    where
+        F: FromStr,
+        <F as FromStr>::Err: Debug;
+}
+
+impl MustParse for String {
+    fn must_parse<F>(&self) -> F
+    where
+        F: FromStr,
+        <F as FromStr>::Err: Debug,
+    {
+        self.parse::<F>().expect(&format!(
+            "'{}' could not parse to {}",
+            self,
+            type_name::<F>()
+        ))
+    }
+}
+
+impl MustParse for &str {
+    fn must_parse<F>(&self) -> F
+    where
+        F: FromStr,
+        <F as FromStr>::Err: Debug,
+    {
+        self.parse::<F>().expect(&format!(
+            "'{}' could not parse to {}",
+            self,
+            type_name::<F>()
+        ))
+    }
+}
+
+#[test]
+fn test_must_parse_str() {
+    assert_eq!("365".must_parse::<i32>(), 365);
+    assert_eq!("-214".must_parse::<i32>(), -214);
+}
+
+#[test]
+#[should_panic(expected = "'-214' could not parse to u32")]
+fn test_must_parse_cannot_parse_neg_to_unsigned() {
+    "-214".must_parse::<u32>();
 }
 
 #[test]
 #[should_panic(expected = "'hi!' could not parse to i64")]
-fn test_must_parse_failure() {
-    must_parse::<i64>("hi!");
+fn test_must_parse_failure_str() {
+    "hi!".must_parse::<i64>();
+}
+
+#[test]
+#[should_panic(expected = "'hi!' could not parse to usize")]
+fn test_must_parse_failure_string() {
+    String::from("hi!").must_parse::<usize>();
 }
