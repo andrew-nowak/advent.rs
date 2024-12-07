@@ -1,9 +1,7 @@
 [package]
-name = "advent_rs_24"
+name = "advent_rs_2017"
 publish = false
 edition = "2021"
 
 [dependencies]
 aoclib = { path = "../aoclib" }
-regex = "1.11.1"
-rustc-hash = "2.1.0"

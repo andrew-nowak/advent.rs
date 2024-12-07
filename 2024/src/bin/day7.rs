@@ -1,4 +1,4 @@
-use advent_rs::MustParse;
+use aoclib::MustParse;
 
 #[derive(Debug)]
 struct StackVal {

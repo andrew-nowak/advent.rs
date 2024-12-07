@@ -2,7 +2,7 @@ use std::time::Instant;
 
 use rustc_hash::FxHashSet as HashSet;
 
-use advent_rs::{Direction, Point};
+use aoclib::{Direction, Point};
 
 fn run_p2_iteration(
     map: &[&[u8]],
@@ -12,7 +12,8 @@ fn run_p2_iteration(
 ) -> bool {
     let extra_obs = start_pos.go(&start_dir);
 
-    let mut visited_w_dir: HashSet<(Point, Direction)> = HashSet::with_capacity_and_hasher(32000, Default::default());
+    let mut visited_w_dir: HashSet<(Point, Direction)> =
+        HashSet::with_capacity_and_hasher(32000, Default::default());
     let mut pos = start_pos.clone();
     let mut dir = start_dir.cw();
 
