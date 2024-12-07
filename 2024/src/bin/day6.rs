@@ -74,7 +74,7 @@ fn run(data: &str) {
         if next_tile == b'#' {
             guard_dir = guard_dir.cw();
         } else {
-            if !visited.contains(&next_pos) 
+            if !visited.contains(&next_pos)
                 && run_p2_iteration(&map, &bounds, &guard_pos, &guard_dir)
             {
                 seen += 1;
