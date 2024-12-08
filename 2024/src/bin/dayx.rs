@@ -1,4 +1,8 @@
+use std::time::Instant;
+
 fn run(data: &str) {
+    let start = Instant::now();
+
     let p1 = format!("hello {}", data);
 
     println!("Part 1: {}", p1);
@@ -6,6 +10,9 @@ fn run(data: &str) {
     let p2 = format!("hello {} v2", data);
 
     println!("Part 2: {}", p2);
+
+    let end = Instant::now();
+    println!("in {}μs", (end - start).as_micros());
 }
 
 fn main() {

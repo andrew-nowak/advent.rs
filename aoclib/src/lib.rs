@@ -2,7 +2,7 @@ use std::any::type_name;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Direction {
     Up,
     Right,
@@ -30,13 +30,27 @@ impl Direction {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
     pub x: i32,
     pub y: i32,
 }
 
 impl Point {
+    pub fn add(&self, other: &Point) -> Point {
+        Point {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+
+    pub fn sub(&self, other: &Point) -> Point {
+        Point {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+
     pub fn within_zero_and(&self, other: &Point) -> bool {
         self.x >= 0 && self.x <= other.x && self.y >= 0 && self.y <= other.y
     }
