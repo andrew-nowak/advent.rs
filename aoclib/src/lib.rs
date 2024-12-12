@@ -101,6 +101,17 @@ impl Point {
     pub fn left(&self) -> Point {
         self.left_by(1)
     }
+
+    pub fn cardinal_neighbours(&self) -> Vec<Point> {
+        vec![self.up(), self.right(), self.down(), self.left()]
+    }
+
+    #[rustfmt::skip]
+    pub fn all_neighbours(&self) -> Vec<Point> {
+       vec![self.up().left()  , self.up()  , self.up().right(),
+            self.left()       , /*        */ self.right(),
+            self.down().left(), self.down(), self.down().right()]
+    }
 }
 
 pub trait MustParse {
