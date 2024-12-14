@@ -1,11 +1,6 @@
 use aoclib::{MustParse, Point};
 use rustc_hash::FxHashSet as HashSet;
-use std::thread;
-use std::time::{Duration, Instant};
-
-fn mod_to_positive(a: i32, b: i32) -> i32 {
-    ((a % b) + b) % b
-}
+use std::time::Instant;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct Bot {
@@ -41,7 +36,7 @@ fn run(data: &str, width: i32, height: i32) {
     let mut bl = 0;
     let mut br = 0;
 
-    let mut bots = Vec::new();
+    let mut bots = Vec::with_capacity(501);
 
     for (_, [px, py, vx, vy]) in robot_re.captures_iter(data).map(|c| c.extract()) {
         let px = px.must_parse::<i32>();
@@ -51,8 +46,8 @@ fn run(data: &str, width: i32, height: i32) {
 
         bots.push(Bot { px, py, vx, vy });
 
-        let px2 = mod_to_positive(px + t * vx, width);
-        let py2 = mod_to_positive(py + t * vy, height);
+        let px2 = (px + t * vx).rem_euclid(width);
+        let py2 = (py + t * vy).rem_euclid(height);
 
         let left = px2 < width / 2;
         let right = px2 > width / 2;
@@ -73,29 +68,27 @@ fn run(data: &str, width: i32, height: i32) {
     println!("Part 1: {}", ul * ur * bl * br);
 
     for t in 0..100000 {
-        let mut points = HashSet::default();
+        let mut points = HashSet::with_capacity_and_hasher(bots.len(), Default::default());
 
         for bot in bots.iter() {
-            let x = mod_to_positive(bot.px + t * bot.vx, width);
-            let y = mod_to_positive(bot.py + t * bot.vy, height);
+            let x = (bot.px + t * bot.vx).rem_euclid(width);
+            let y = (bot.py + t * bot.vy).rem_euclid(height);
             points.insert(Point { x, y });
         }
 
         if points
             .iter()
-            .filter(|p| p.all_neighbours().iter().any(|n| points.contains(&n)))
+            .filter(|p| p.cardinal_neighbours().iter().any(|n| points.contains(n)))
             .count()
             > points.len() * 3 / 5
         {
-            println!("                          ");
-            println!("=========== {} ===========", t);
+            println!("Part 2: {} ", t);
             print_bots(&points, width, height);
 
-            thread::sleep(Duration::from_millis(750));
+            //thread::sleep(Duration::from_millis(750));
+            break;
         }
     }
-
-    //println!("Part 2: {}", p2);
 
     let end = Instant::now();
     println!("in {}μs", (end - start).as_micros());
@@ -119,7 +112,7 @@ p=9,5 v=-3,-3";
     let real = include_str!("../../in/14.txt").trim();
 
     println!("--- example ---");
-    //run(example, 11, 7);
+    run(example, 11, 7);
 
     println!("--- real ---");
     run(real, 101, 103);
