@@ -56,11 +56,15 @@ impl Point {
     }
 
     pub fn go(&self, direction: &Direction) -> Point {
+        self.go_by(direction, 1)
+    }
+
+    pub fn go_by(&self, direction: &Direction, dist: i32) -> Point {
         match direction {
-            Direction::Up => self.up(),
-            Direction::Left => self.left(),
-            Direction::Down => self.down(),
-            Direction::Right => self.right(),
+            Direction::Up => self.up_by(dist),
+            Direction::Left => self.left_by(dist),
+            Direction::Down => self.down_by(dist),
+            Direction::Right => self.right_by(dist),
         }
     }
 
