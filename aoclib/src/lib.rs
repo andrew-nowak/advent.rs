@@ -116,6 +116,10 @@ impl Point {
             self.left()       , /*        */ self.right(),
             self.down().left(), self.down(), self.down().right()]
     }
+
+    pub fn manhattan(&self, o: &Point) -> i32 {
+        (self.x.abs_diff(o.x) + self.y.abs_diff(o.y)) as i32
+    }
 }
 
 pub trait MustParse {

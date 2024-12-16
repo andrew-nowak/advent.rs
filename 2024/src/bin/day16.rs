@@ -3,14 +3,15 @@ use std::time::Instant;
 
 use aoclib::Direction;
 use priority_queue::PriorityQueue;
+use rustc_hash::FxHashMap as HashMap;
 use rustc_hash::FxHashSet as HashSet;
 
 use aoclib::Point;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 struct State {
-    score: i64,
-    //visited: Vec<Point>,
+    score: i32,
+    visited: Vec<Point>,
     location: Point,
     direction: Direction,
 }
@@ -51,18 +52,19 @@ fn run(data: &str) {
 
     let initial = State {
         score: 0,
-        //visited: startpoint_vec,
+        visited: startpoint_vec,
         location: startpoint,
         direction: Direction::Right,
     };
 
     let mut pq = PriorityQueue::with_capacity(100_000);
-    //let mut visited: HashMap<(Point, Direction), i64> =
-    //    HashMap::from_iter([((startpoint, Direction::Right), 0)]);
     pq.push(initial.clone(), Reverse(0));
 
-    let mut best = i64::MAX;
-    //let mut best_paths = HashSet::default();
+    let mut best = i32::MAX;
+    let mut cheapest_to_state = HashMap::default();
+    cheapest_to_state.insert((startpoint, Direction::Right), 0);
+
+    let mut best_paths = HashSet::default();
 
     'mainloop: while let Some((state, _)) = pq.pop() {
         if state.score > best {
@@ -80,7 +82,7 @@ fn run(data: &str) {
         } else {
             let mut s = state.clone();
             s.location = ahead;
-            //s.visited.push(ahead);
+            s.visited.push(ahead);
             s.score += 1;
             Some(s)
         };
@@ -89,25 +91,35 @@ fn run(data: &str) {
             match next_state {
                 Some(next_state) if next_state.location == endpoint && next_state.score < best => {
                     println!("Part 1: {}", next_state.score);
-                    break 'mainloop;
-                    //best = next_state.score;
-                    //best_paths.extend(next_state.visited);
+                    // break 'mainloop;
+                    best = next_state.score;
+                    best_paths.extend(next_state.visited);
                 }
                 Some(next_state) if next_state.location == endpoint && next_state.score == best => {
-                    //best_paths.extend(next_state.visited);
+                    best_paths.extend(next_state.visited);
                 }
                 Some(next_state) if next_state.score > best => (),
+                Some(next_state)
+                    if cheapest_to_state
+                        .get(&(next_state.location, next_state.direction))
+                        .map(|&cost| cost < next_state.score)
+                        .unwrap_or(false) =>
+                {
+                    ()
+                }
                 Some(next_state) => {
+                    cheapest_to_state.insert(
+                        (next_state.location, next_state.direction),
+                        next_state.score,
+                    );
                     pq.push(next_state.clone(), Reverse(next_state.score));
                 }
                 None => (),
             }
         }
-        //Some(next_state) if visited.get((next_state.location, next_state.direction)).map(|v|v < next_state.score).unwrap_or(true) => {
-        //    visited.insert((next_state.location, next_state.direction), next_state.score);
     }
 
-    //println!("Part 2: {}", best_paths.len());
+    println!("Part 2: {}", best_paths.len());
 
     let end = Instant::now();
     println!("in {}μs", (end - start).as_micros());
