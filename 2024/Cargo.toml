@@ -7,3 +7,4 @@ edition = "2021"
 aoclib = { path = "../aoclib" }
 regex = "1.11.1"
 rustc-hash = "2.1.0"
+priority-queue = "2.1.1"
