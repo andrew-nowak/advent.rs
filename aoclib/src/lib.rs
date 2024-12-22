@@ -37,6 +37,13 @@ pub struct Point {
 }
 
 impl Point {
+    pub fn from(x: usize, y: usize) -> Point {
+        Point {
+            x: x as i32,
+            y: y as i32,
+        }
+    }
+
     pub fn add(&self, other: &Point) -> Point {
         Point {
             x: self.x + other.x,
