@@ -86,7 +86,6 @@ fn run(data: &str) {
         }
     }
 
-
     println!("Part 1: {}", p1);
 
     println!("Part 2: {}", p2);
