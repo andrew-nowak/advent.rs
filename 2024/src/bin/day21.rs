@@ -32,6 +32,182 @@ fn direction_keypad() -> FxHashMap<char, Point> {
     pad
 }
 
+macro_rules! hmap {
+    ($($k:expr => $v:expr),* $(,)?) => {{
+        FxHashMap::from_iter(std::iter::IntoIterator::into_iter([$(($k, $v),)*]))
+    }};
+}
+
+fn cheapest_transitions() -> FxHashMap<Transition, FxHashMap<Transition, i64>> {
+    let mut lookup = FxHashMap::default();
+
+    lookup.insert(('A', 'A'), hmap! {('A', 'A') => 1});
+    lookup.insert(('<', '<'), hmap! {('A', 'A') => 1});
+    lookup.insert(('^', '^'), hmap! {('A', 'A') => 1});
+    lookup.insert(('>', '>'), hmap! {('A', 'A') => 1});
+    lookup.insert(('v', 'v'), hmap! {('A', 'A') => 1});
+
+    lookup.insert(
+        ('A', '<'),
+        hmap! {
+            ('A', 'v') => 1,
+            ('v', '<') => 1,
+            ('<', '<') => 1,
+            ('<', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('A', '^'),
+        hmap! {
+            ('A', '<') => 1,
+            ('<', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('A', '>'),
+        hmap! {
+            ('A', 'v') => 1,
+            ('v', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('A', 'v'),
+        hmap! {
+            ('A', '<') => 1,
+            ('<', 'v') => 1,
+            ('v', 'A') => 1,
+        },
+    );
+
+    lookup.insert(
+        ('<', 'A'),
+        hmap! {
+            ('A', '>') => 1,
+            ('>', '>') => 1,
+            ('>', '^') => 1,
+            ('^', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('<', '^'),
+        hmap! {
+            ('A', '>') => 1,
+            ('>', '^') => 1,
+            ('^', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('<', '>'),
+        hmap! {
+            ('A', '>') => 1,
+            ('>', '>') => 1,
+            ('>', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('<', 'v'),
+        hmap! {
+            ('A', '>') => 1,
+            ('>', 'A') => 1,
+        },
+    );
+
+    lookup.insert(
+        ('^', 'A'),
+        hmap! {
+            ('A', '>') => 1,
+            ('>', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('^', '<'),
+        hmap! {
+            ('A', 'v') => 1,
+            ('v', '<') => 1,
+            ('<', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('^', '>'),
+        hmap! {
+            ('A', 'v') => 1,
+            ('v', '>') => 1,
+            ('>', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('^', 'v'),
+        hmap! {
+            ('A', 'v') => 1,
+            ('v', 'A') => 1,
+        },
+    );
+
+    lookup.insert(
+        ('>', 'A'),
+        hmap! {
+            ('A', '^') => 1,
+            ('^', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('>', '^'),
+        hmap! {
+            ('A', '<') => 1,
+            ('<', '^') => 1,
+            ('^', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('>', '<'),
+        hmap! {
+            ('A', '<') => 1,
+            ('<', '<') => 1,
+            ('<', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('>', 'v'),
+        hmap! {
+            ('A', '<') => 1,
+            ('<', 'A') => 1,
+        },
+    );
+
+    lookup.insert(
+        ('v', 'A'),
+        hmap! {
+            ('A', '^') => 1,
+            ('^', '>') => 1,
+            ('>', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('v', '^'),
+        hmap! {
+            ('A', '^') => 1,
+            ('^', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('v', '>'),
+        hmap! {
+            ('A', '>') => 1,
+            ('>', 'A') => 1,
+        },
+    );
+    lookup.insert(
+        ('v', '<'),
+        hmap! {
+            ('A', '<') => 1,
+            ('<', 'A') => 1,
+        },
+    );
+
+    lookup
+}
+
+
 fn dir_from_key(key: &char) -> Direction {
     match key {
         '^' => Direction::Up,
@@ -126,37 +302,125 @@ fn select_cheapest_types(pad: &FxHashMap<char, Point>, seqs: &Vec<Vec<char>>) ->
         .iter()
         .filter(|&s| s.len() == cheapest_seq)
         .cloned()
-        .collect();
+        .collect_vec();
+
     all_of_cheapest_len
+    //let cheapest_with_most_runs = all_of_cheapest_len.iter().max_by_key(|s| {
+    //    s.windows(2).map(|pair| if pair[0] == pair[1] { 4 } else { 0 }).sum::<i32>()
+    //}).expect("bla");
+    //vec!(cheapest_with_most_runs.clone())
+}
+
+type Transition = (char, char);
+
+fn to_transitions(seqs: &Vec<Vec<char>>) -> Vec<FxHashMap<Transition, i64>> {
+    seqs.iter()
+        .map(|s| {
+            let mut m = FxHashMap::default();
+            let i = std::iter::once(&'A').chain(s);
+
+            for (&a, &b) in i.tuple_windows() {
+                m.entry((a, b)).and_modify(|e| *e += 1).or_insert(1);
+            }
+            m
+        })
+        .collect_vec()
+}
+
+fn extend_by_transitions(
+    seqs: &Vec<FxHashMap<Transition, i64>>,
+) -> Vec<FxHashMap<Transition, i64>> {
+    let cheapest_transitions = cheapest_transitions();
+
+    seqs.iter()
+        .map(|seq| {
+            let mut next_transitions = FxHashMap::default();
+
+            for (transition, count) in seq.iter() {
+                for (subsequent, subs_count) in cheapest_transitions
+                    .get(transition)
+                    .expect("transition missing from lookup?")
+                {
+                    let count = count * subs_count;
+                    next_transitions
+                        .entry(*subsequent)
+                        .and_modify(|e| *e += count)
+                        .or_insert(count);
+                }
+            }
+            next_transitions
+        })
+        .collect_vec()
+}
+
+fn cheapest_route(routes: &Vec<FxHashMap<Transition, i64>>) -> i64 {
+    let mut best = None;
+
+    for route in routes.iter() {
+        let tot = route.values().sum();
+        match best {
+            None => best = Some(tot),
+            Some(prior_best) if tot < prior_best => best = Some(tot),
+            _ => (),
+        };
+    }
+
+    best.expect("no routes in routes?")
 }
 
 fn run(data: &str) {
     let start = Instant::now();
 
     let mut p1 = 0;
+    let mut p2 = 0;
 
     for code in data.lines() {
         let code_chars = [code.chars().collect_vec()].to_vec();
         let bot_1 = select_cheapest_types(&numeric_keypad(), &code_chars);
+        let bot_1_t = to_transitions(&bot_1);
+        let bot_2 = extend_by_transitions(&bot_1_t);
+        let bot_3 = extend_by_transitions(&bot_2);
+        let bot_4 = extend_by_transitions(&bot_3);
+        let bot_5 = extend_by_transitions(&bot_4);
+        let bot_6 = extend_by_transitions(&bot_5);
+        let bot_7 = extend_by_transitions(&bot_6);
+        let bot_8 = extend_by_transitions(&bot_7);
+        let bot_9 = extend_by_transitions(&bot_8);
+        let bot_10 = extend_by_transitions(&bot_9);
+        let bot_11 = extend_by_transitions(&bot_10);
+        let bot_12 = extend_by_transitions(&bot_11);
+        let bot_13 = extend_by_transitions(&bot_12);
+        let bot_14 = extend_by_transitions(&bot_13);
+        let bot_15 = extend_by_transitions(&bot_14);
+        let bot_16 = extend_by_transitions(&bot_15);
+        let bot_17 = extend_by_transitions(&bot_16);
+        let bot_18 = extend_by_transitions(&bot_17);
+        let bot_19 = extend_by_transitions(&bot_18);
+        let bot_20 = extend_by_transitions(&bot_19);
+        let bot_21 = extend_by_transitions(&bot_20);
+        let bot_22 = extend_by_transitions(&bot_21);
+        let bot_23 = extend_by_transitions(&bot_22);
+        let bot_24 = extend_by_transitions(&bot_23);
+        let bot_25 = extend_by_transitions(&bot_24);
+        let bot_26 = extend_by_transitions(&bot_25);
         //println!("{}", bot_1.len());
-        let bot_2 = select_cheapest_types(&direction_keypad(), &bot_1);
-        let bot_3 = select_cheapest_types(&direction_keypad(), &bot_2);
+        //let bot_2 = select_cheapest_types(&direction_keypad(), &bot_1);
 
-        let code_num = (&code[..code.len() - 1]).must_parse::<i32>();
+        let code_num = (&code[..code.len() - 1]).must_parse::<i64>();
 
-        p1 += code_num * bot_3[0].len() as i32;
+        p1 += code_num * cheapest_route(&bot_3) as i64;
+        p2 += code_num * cheapest_route(&bot_26) as i64;
     }
 
     println!("Part 1: {}", p1);
 
-    //println!("Part 2: {}", p2);
+    println!("Part 2: {}", p2);
 
     let end = Instant::now();
     println!("in {}μs", (end - start).as_micros());
 }
 
 fn main() {
-    //let example = "029A";
     let example = "\
 029A
 980A
