@@ -207,7 +207,6 @@ fn cheapest_transitions() -> FxHashMap<Transition, FxHashMap<Transition, i64>> {
     lookup
 }
 
-
 fn dir_from_key(key: &char) -> Direction {
     match key {
         '^' => Direction::Up,
