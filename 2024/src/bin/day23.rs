@@ -1,3 +1,4 @@
+use aoclib::hset;
 use itertools::Itertools;
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::time::Instant;
@@ -8,12 +9,6 @@ fn ordered_trio<'a>(a: &'a str, b: &'a str, c: &'a str) -> Trio<'a> {
     let mut ord = [a, b, c];
     ord.sort();
     (ord[0], ord[1], ord[2])
-}
-
-macro_rules! hset {
-    ($($v:expr),* $(,)?) => {{
-        FxHashSet::from_iter(std::iter::IntoIterator::into_iter([$($v,)*]))
-    }};
 }
 
 fn run(data: &str) {

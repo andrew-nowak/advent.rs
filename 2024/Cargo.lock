@@ -25,6 +25,9 @@ dependencies = [
 [[package]]
 name = "aoclib"
 version = "0.0.0"
+dependencies = [
+ "rustc-hash",
+]
 
 [[package]]
 name = "autocfg"

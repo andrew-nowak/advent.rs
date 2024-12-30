@@ -187,3 +187,17 @@ fn test_must_parse_failure_str() {
 fn test_must_parse_failure_string() {
     String::from("hi!").must_parse::<usize>();
 }
+
+#[macro_export]
+macro_rules! hset {
+    ($($v:expr),* $(,)?) => {{
+        FxHashSet::from_iter(std::iter::IntoIterator::into_iter([$($v,)*]))
+    }};
+}
+
+#[macro_export]
+macro_rules! hmap {
+    ($($k:expr => $v:expr),* $(,)?) => {{
+        FxHashMap::from_iter(std::iter::IntoIterator::into_iter([$(($k, $v),)*]))
+    }};
+}

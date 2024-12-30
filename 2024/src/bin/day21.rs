@@ -1,4 +1,4 @@
-use aoclib::MustParse;
+use aoclib::{hmap, MustParse};
 use aoclib::{Direction, Point};
 use itertools::Itertools;
 use rustc_hash::FxHashMap;
@@ -30,12 +30,6 @@ fn direction_keypad() -> FxHashMap<char, Point> {
     pad.insert('>', Point { x: 2, y: 1 });
 
     pad
-}
-
-macro_rules! hmap {
-    ($($k:expr => $v:expr),* $(,)?) => {{
-        FxHashMap::from_iter(std::iter::IntoIterator::into_iter([$(($k, $v),)*]))
-    }};
 }
 
 fn cheapest_transitions() -> FxHashMap<Transition, FxHashMap<Transition, i64>> {
