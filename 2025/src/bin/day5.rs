@@ -3,6 +3,7 @@ use std::time::Instant;
 use aoclib::MustParse;
 use itertools::Itertools;
 
+#[allow(unused_variables)]
 fn remove_overlaps_from_range(
     current_range: Option<(u64, u64)>,
     comparee: &(u64, u64),
