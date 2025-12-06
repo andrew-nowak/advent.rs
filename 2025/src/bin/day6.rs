@@ -8,6 +8,7 @@ fn run(data: &str) {
 
     let mut lines = data.lines().rev();
 
+    // collect out the line of operators separately from the numbers
     let ops = lines
         .next()
         .expect("No first line??")
@@ -15,6 +16,7 @@ fn run(data: &str) {
         .split_whitespace()
         .collect_vec();
 
+    // now grab the numbers - 2d vec matching input order
     let numbers: Vec<Vec<u64>> = lines
         .map(|l| {
             l.trim()
@@ -47,30 +49,38 @@ fn run(data: &str) {
 
     println!("Part 1: {}", total);
 
-    let lined_data = data
+    // for part 2, reparse the numbers
+    let lined_data: Vec<&[u8]> = data
         .lines()
+        // drop the operators line
         .dropping_back(1)
+        // store as byte array
         .map(|l| l.as_bytes())
         .collect_vec();
+
     let line_length = lined_data[0].len();
 
+    // parse the numbers out of their columnar format into one long list
+    // the empty columns in the input (which delimt the separate problems)
+    // will show up as zeroes
     let mut ns = Vec::with_capacity(line_length);
 
     for i in 0..line_length {
         let mut n = 0;
         for line in &lined_data {
-            let digit_at = line[i];
-            if digit_at > b'0' && digit_at <= b'9' {
-                n = (n * 10) + (digit_at - b'0') as u64;
+            if line[i] > b'0' && line[i] <= b'9' {
+                n = (n * 10) + (line[i] - b'0') as u64;
             }
         }
 
         ns.push(n);
     }
 
+    // now split on those zeroes to group the numbers into the problems
     let groups = ns.split(|&n| n == 0).collect_vec();
     // println!("{:?}", groups);
 
+    // and solve each problem, and sum
     let p2: u64 = groups
         .iter()
         .zip(ops.iter())
