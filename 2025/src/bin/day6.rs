@@ -47,9 +47,43 @@ fn run(data: &str) {
 
     println!("Part 1: {}", total);
 
-    // let p2 = format!("hello {} v2", data);
-    //
-    // println!("Part 2: {}", p2);
+    let lined_data = data
+        .lines()
+        .dropping_back(1)
+        .map(|l| l.as_bytes())
+        .collect_vec();
+    let line_length = lined_data[0].len();
+
+    let mut ns = Vec::with_capacity(line_length);
+
+    for i in 0..line_length {
+        let mut n = 0;
+        for line in &lined_data {
+            let digit_at = line[i];
+            if digit_at > b'0' && digit_at <= b'9' {
+                n = (n * 10) + (digit_at - b'0') as u64;
+            }
+        }
+
+        ns.push(n);
+    }
+
+    let groups = ns.split(|&n| n == 0).collect_vec();
+    // println!("{:?}", groups);
+
+    let p2: u64 = groups
+        .iter()
+        .zip(ops.iter())
+        .map(|(&ns, &op)| {
+            if op == "+" {
+                ns.iter().sum::<u64>()
+            } else {
+                ns.iter().product()
+            }
+        })
+        .sum();
+
+    println!("Part 2: {}", p2);
 
     let end = Instant::now();
     println!("in {}μs", (end - start).as_micros());
