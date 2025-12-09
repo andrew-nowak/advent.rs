@@ -32,15 +32,15 @@ impl Direction {
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
-    pub x: i32,
-    pub y: i32,
+    pub x: i64,
+    pub y: i64,
 }
 
 impl Point {
     pub fn from(x: usize, y: usize) -> Point {
         Point {
-            x: x as i32,
-            y: y as i32,
+            x: x as i64,
+            y: y as i64,
         }
     }
 
@@ -66,7 +66,7 @@ impl Point {
         self.go_by(direction, 1)
     }
 
-    pub fn go_by(&self, direction: &Direction, dist: i32) -> Point {
+    pub fn go_by(&self, direction: &Direction, dist: i64) -> Point {
         match direction {
             Direction::Up => self.up_by(dist),
             Direction::Left => self.left_by(dist),
@@ -75,7 +75,7 @@ impl Point {
         }
     }
 
-    pub fn up_by(&self, dist: i32) -> Point {
+    pub fn up_by(&self, dist: i64) -> Point {
         Point {
             x: self.x,
             y: self.y - dist,
@@ -85,7 +85,7 @@ impl Point {
         self.up_by(1)
     }
 
-    pub fn right_by(&self, dist: i32) -> Point {
+    pub fn right_by(&self, dist: i64) -> Point {
         Point {
             x: self.x + dist,
             y: self.y,
@@ -94,7 +94,7 @@ impl Point {
     pub fn right(&self) -> Point {
         self.right_by(1)
     }
-    pub fn down_by(&self, dist: i32) -> Point {
+    pub fn down_by(&self, dist: i64) -> Point {
         Point {
             x: self.x,
             y: self.y + dist,
@@ -103,7 +103,7 @@ impl Point {
     pub fn down(&self) -> Point {
         self.down_by(1)
     }
-    pub fn left_by(&self, dist: i32) -> Point {
+    pub fn left_by(&self, dist: i64) -> Point {
         Point {
             x: self.x - dist,
             y: self.y,
@@ -124,8 +124,8 @@ impl Point {
             self.down().left(), self.down(), self.down().right()]
     }
 
-    pub fn manhattan(&self, o: &Point) -> i32 {
-        (self.x.abs_diff(o.x) + self.y.abs_diff(o.y)) as i32
+    pub fn manhattan(&self, o: &Point) -> i64 {
+        (self.x.abs_diff(o.x) + self.y.abs_diff(o.y)) as i64
     }
 }
 

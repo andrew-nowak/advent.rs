@@ -15,7 +15,7 @@ enum Width {
     Wide,
 }
 
-fn print_map(m: &HashMap<Point, Tile>, bot: &Point, width: i32, height: i32) {
+fn print_map(m: &HashMap<Point, Tile>, bot: &Point, width: i64, height: i64) {
     for y in 0..height {
         for x in 0..width {
             if bot.x == x && bot.y == y {
@@ -51,8 +51,8 @@ fn run(data: &str) {
 
     for (i, b) in mapdata.as_bytes().iter().enumerate() {
         let p = Point {
-            x: (i % width) as i32,
-            y: (i / width) as i32,
+            x: (i % width) as i64,
+            y: (i / width) as i64,
         };
         match b {
             b'@' => bot_start = Some(p),
@@ -117,7 +117,7 @@ fn run(data: &str) {
             gps += 100 * pos.y + pos.x;
         }
     }
-    //print_map(&map, &bot, width as i32, height as i32);
+    //print_map(&map, &bot, width as i64, height as i64);
 
     println!("Part 1: {}", gps);
 
@@ -137,7 +137,7 @@ fn run(data: &str) {
         y: bot_start.y,
     };
 
-    //print_map(&map, &bot, 2 * width as i32, height as i32);
+    //print_map(&map, &bot, 2 * width as i64, height as i64);
     for arrow in movedata.as_bytes().iter() {
         //println!("=====");
         //println!("{}", *arrow as char);
@@ -163,7 +163,7 @@ fn run(data: &str) {
             }
             bot = bot.go(&dir);
         }
-        //print_map(&map, &bot, 2 * width as i32, height as i32);
+        //print_map(&map, &bot, 2 * width as i64, height as i64);
     }
     let mut gps = 0;
 
@@ -172,7 +172,7 @@ fn run(data: &str) {
             gps += 100 * pos.y + pos.x;
         }
     }
-    print_map(&map, &bot, 2 * width as i32, height as i32);
+    print_map(&map, &bot, 2 * width as i64, height as i64);
 
     println!("Part 2: {}", gps);
 

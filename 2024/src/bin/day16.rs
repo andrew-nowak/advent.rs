@@ -10,7 +10,7 @@ use aoclib::Point;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 struct State {
-    score: i32,
+    score: i64,
     visited: Vec<Point>,
     location: Point,
     direction: Direction,
@@ -24,13 +24,13 @@ fn run(data: &str) {
 
     let startpoint = data.iter().position(|&b| b == b'S').expect("no start?");
     let startpoint = Point {
-        x: (startpoint % area_width) as i32,
-        y: (startpoint / area_width) as i32,
+        x: (startpoint % area_width) as i64,
+        y: (startpoint / area_width) as i64,
     };
     let endpoint = data.iter().position(|&b| b == b'E').expect("no end?");
     let endpoint = Point {
-        x: (endpoint % area_width) as i32,
-        y: (endpoint / area_width) as i32,
+        x: (endpoint % area_width) as i64,
+        y: (endpoint / area_width) as i64,
     };
     let walls = data
         .iter()
@@ -38,8 +38,8 @@ fn run(data: &str) {
         .filter_map(|(i, &b)| {
             if b == b'#' {
                 Some(Point {
-                    x: (i % area_width) as i32,
-                    y: (i / area_width) as i32,
+                    x: (i % area_width) as i64,
+                    y: (i / area_width) as i64,
                 })
             } else {
                 None
@@ -60,7 +60,7 @@ fn run(data: &str) {
     let mut pq = PriorityQueue::with_capacity(100_000);
     pq.push(initial.clone(), Reverse(0));
 
-    let mut best = i32::MAX;
+    let mut best = i64::MAX;
     let mut cheapest_to_state = HashMap::default();
     cheapest_to_state.insert((startpoint, Direction::Right), 0);
 

@@ -9,16 +9,16 @@ fn run(data: &str) {
     let mut map: HashMap<u8, Vec<Point>> = HashMap::default();
 
     let bounds = Point {
-        x: data.lines().next().expect("Couldn't find x bound").len() as i32 - 1,
-        y: data.lines().count() as i32 - 1,
+        x: data.lines().next().expect("Couldn't find x bound").len() as i64 - 1,
+        y: data.lines().count() as i64 - 1,
     };
 
     for (i, line) in data.lines().enumerate() {
         for (j, ch) in line.as_bytes().iter().enumerate() {
             if *ch != b'.' {
                 let p = Point {
-                    x: j as i32,
-                    y: i as i32,
+                    x: j as i64,
+                    y: i as i64,
                 };
                 map.entry(*ch).or_default().push(p);
             }

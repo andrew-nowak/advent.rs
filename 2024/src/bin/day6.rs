@@ -50,13 +50,13 @@ fn run(data: &str) {
     let map_width = map[0].len();
 
     let bounds = Point {
-        x: map_width as i32 - 1,
-        y: map_height as i32 - 1,
+        x: map_width as i64 - 1,
+        y: map_height as i64 - 1,
     };
 
     let start_pos = Point {
-        x: (guard_start % (map_width + 1)) as i32,
-        y: (guard_start / (map_width + 1)) as i32,
+        x: (guard_start % (map_width + 1)) as i64,
+        y: (guard_start / (map_width + 1)) as i64,
     };
     let start_dir = Direction::Up;
 

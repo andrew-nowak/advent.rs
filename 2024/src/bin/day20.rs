@@ -75,8 +75,8 @@ fn run(data: &str) {
     for i in 0..route.len() {
         for j in i..route.len() {
             let dist = route[i].manhattan(&route[j]);
-            let i = i as i32;
-            let j = j as i32;
+            let i = i as i64;
+            let j = j as i64;
             if dist <= 2 && (j - i - dist) >= 100 {
                 p1 += 1;
             }

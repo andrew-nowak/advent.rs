@@ -33,7 +33,7 @@ fn can_exit(target: &Point, obstacles: &FxHashSet<Point>) -> bool {
     return false;
 }
 
-fn run(data: &str, width: i32, bytes: usize) {
+fn run(data: &str, width: i64, bytes: usize) {
     let start = Instant::now();
 
     let start_state = State {
@@ -50,8 +50,8 @@ fn run(data: &str, width: i32, bytes: usize) {
             .expect("pos line doesn't match expected");
 
         fallen_bytes.insert(Point {
-            x: xr.must_parse::<i32>(),
-            y: yr.must_parse::<i32>(),
+            x: xr.must_parse::<i64>(),
+            y: yr.must_parse::<i64>(),
         });
     }
 
@@ -88,8 +88,8 @@ fn run(data: &str, width: i32, bytes: usize) {
             .expect("pos line doesn't match expected");
 
         fallen_bytes.insert(Point {
-            x: xr.must_parse::<i32>(),
-            y: yr.must_parse::<i32>(),
+            x: xr.must_parse::<i64>(),
+            y: yr.must_parse::<i64>(),
         });
 
         if !can_exit(&target, &fallen_bytes) {

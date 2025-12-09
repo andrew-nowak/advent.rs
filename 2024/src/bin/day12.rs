@@ -72,8 +72,8 @@ fn run(data: &str) {
 
     for (i, plant) in data.bytes().filter(|&c| c != b'\n').enumerate() {
         let point = Point {
-            x: (i % width) as i32,
-            y: (i / width) as i32,
+            x: (i % width) as i64,
+            y: (i / width) as i64,
         };
         assert!(!map.contains_key(&point));
         map.insert(point, plant);

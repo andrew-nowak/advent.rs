@@ -4,13 +4,13 @@ use std::time::Instant;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct Bot {
-    px: i32,
-    py: i32,
-    vx: i32,
-    vy: i32,
+    px: i64,
+    py: i64,
+    vx: i64,
+    vy: i64,
 }
 
-fn print_bots(bots: &HashSet<Point>, width: i32, height: i32) {
+fn print_bots(bots: &HashSet<Point>, width: i64, height: i64) {
     for y in 0..height {
         for x in 0..width {
             if bots.contains(&Point { x, y }) {
@@ -23,7 +23,7 @@ fn print_bots(bots: &HashSet<Point>, width: i32, height: i32) {
     }
 }
 
-fn run(data: &str, width: i32, height: i32) {
+fn run(data: &str, width: i64, height: i64) {
     let start = Instant::now();
 
     let robot_re = regex::Regex::new(r"p=(-?\d+),(-?\d+) v=(-?\d+),(-?\d+)")
@@ -39,10 +39,10 @@ fn run(data: &str, width: i32, height: i32) {
     let mut bots = Vec::with_capacity(501);
 
     for (_, [px, py, vx, vy]) in robot_re.captures_iter(data).map(|c| c.extract()) {
-        let px = px.must_parse::<i32>();
-        let py = py.must_parse::<i32>();
-        let vx = vx.must_parse::<i32>();
-        let vy = vy.must_parse::<i32>();
+        let px = px.must_parse::<i64>();
+        let py = py.must_parse::<i64>();
+        let vx = vx.must_parse::<i64>();
+        let vy = vy.must_parse::<i64>();
 
         bots.push(Bot { px, py, vx, vy });
 
