@@ -129,6 +129,22 @@ impl Point {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Point3 {
+    pub x: i64,
+    pub y: i64,
+    pub z: i64,
+}
+
+impl Point3 {
+    pub fn dist(&self, other: &Point3) -> f64 {
+        let squared = (self.x - other.x).pow(2) +
+            (self.y - other.y).pow(2) +
+            (self.z - other.z).pow(2);
+        (squared as f64).sqrt()
+    }
+}
+
 pub trait MustParse {
     fn must_parse<F>(&self) -> F
     where
