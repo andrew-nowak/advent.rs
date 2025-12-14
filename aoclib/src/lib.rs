@@ -58,7 +58,17 @@ impl Point {
         }
     }
 
+    pub fn within_rect_of(&self, a: &Point, b: &Point) -> bool {
+        let big_x = a.x.max(b.x);
+        let small_x = a.x.min(b.x);
+        let big_y = a.y.max(b.y);
+        let small_y = a.y.min(b.y);
+
+        self.x >= small_x && self.x <= big_x && self.y >= small_y && self.y <= big_y
+    }
+
     pub fn within_zero_and(&self, other: &Point) -> bool {
+        // self.within_rect_of(Point { x: 0, y: 0 }, other)
         self.x >= 0 && self.x <= other.x && self.y >= 0 && self.y <= other.y
     }
 
@@ -138,9 +148,8 @@ pub struct Point3 {
 
 impl Point3 {
     pub fn dist(&self, other: &Point3) -> f64 {
-        let squared = (self.x - other.x).pow(2) +
-            (self.y - other.y).pow(2) +
-            (self.z - other.z).pow(2);
+        let squared =
+            (self.x - other.x).pow(2) + (self.y - other.y).pow(2) + (self.z - other.z).pow(2);
         (squared as f64).sqrt()
     }
 }
